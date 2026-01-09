@@ -1,18 +1,24 @@
 import express from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
+
 
 import userRouter from './routers/userRouter.js';
 import productRouter from './routers/productRouter.js';
 import jwl from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const mango = "mongodb+srv://ishan:1234@cluster0.xnsttfy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-mongoose.connect(mango).then
+const mongoURL = process.env.mongoURL
+mongoose.connect(mongoURL).then
 (()=>{
     console.log("connected to mongoDB");
 })
 
 
 const app = express();
+//avalable frontend  req come to back end using cors
+app.use(cors());
 app.use(express.json());
 
 //make securty room of us it amiddleware
@@ -59,8 +65,8 @@ app.use((req,res,next)=>{
 )
 
 
-app.use('/users',userRouter)
-app.use('/products',productRouter);
+app.use('/api/users',userRouter)
+app.use('/api/products',productRouter);
 
 
 app.listen(5000,()=>{
