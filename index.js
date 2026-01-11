@@ -35,10 +35,11 @@ app.use((req,res,next)=>{
             (error,content)=>{
                 if(content==null)
                 {
-                   
-                    res.json({
+
+                    res.status(401).json({
 
                         message : "invalid token"
+                        
                         
                     })
                     // if wrong token we dont run until after that  why use return

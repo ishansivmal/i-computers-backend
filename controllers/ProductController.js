@@ -1,6 +1,8 @@
 import express from "express";    
 import product from "../models/product.js";
 
+
+
 import { isAdmin } from "../controllers/userController.js";
 import e from "express";
 
@@ -27,6 +29,7 @@ export function createProduct(req,res){
             message: "Error creating product",
             error: err.message
         })
+        console.log(err)
     })
 
 }
@@ -53,7 +56,7 @@ export function getAllproduct(req,res){
     }
     else{
 
-        product.find({isAvalabale:true}).then(
+        product.find({isAvailabale:true}).then(
             (products)=>{
                 res.json(products)
             }
