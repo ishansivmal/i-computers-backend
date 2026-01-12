@@ -42,6 +42,7 @@ export function getAllproduct(req,res){
         product.find().then(
             (products)=>{
                 res.json(products)
+                
             }
         )
         .catch(
@@ -56,7 +57,7 @@ export function getAllproduct(req,res){
     }
     else{
 
-        product.find({isAvailabale:true}).then(
+        product.find({isAvalabale:true}).then(
             (products)=>{
                 res.json(products)
             }
@@ -74,6 +75,8 @@ export function getAllproduct(req,res){
 
 
 export function deleteProducts(req,res){
+    console.log(req.user);
+
     if(!isAdmin(req)){
         res.status(403).json({ message: "Forbidden: Admins only" });
         return
@@ -130,7 +133,8 @@ export function getProductById(req,res){
         (product)=>{
             if(product == null){
                 res.status(404).json({
-                    message: "Product not found"
+                    message: "Product not found "
+                    
                 })
                 return
             }
