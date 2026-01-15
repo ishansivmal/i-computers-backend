@@ -57,7 +57,7 @@ export function getAllproduct(req,res){
     }
     else{
 
-        product.find({isAvalabale:true}).then(
+        product.find({}).then(
             (products)=>{
                 res.json(products)
             }
@@ -139,7 +139,7 @@ export function getProductById(req,res){
                 return
             }
             else{
-                if(product.isAvalabale)
+                if(product.isAvailable)
                 {
                     res.json(product)
                 }

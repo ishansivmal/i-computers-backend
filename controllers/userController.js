@@ -88,12 +88,12 @@ export function loginUser(req,res){
 export function isAdmin(req){
 
      if(req.user == null){
-      
+        console.log(req.user);
         return false
     }
 
     if(req.user.role != "admin"){
-       
+        console.log(req.user);
         return false
     }
     return true
