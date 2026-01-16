@@ -11,9 +11,9 @@ dotenv.config();
 
 const mongoURL = process.env.mongoURL
 mongoose.connect(mongoURL).then
-(()=>{
-    console.log("connected to mongoDB");
-})
+    (() => {
+        console.log("connected to mongoDB");
+    })
 
 
 const app = express();
@@ -22,57 +22,54 @@ app.use(cors());
 app.use(express.json());
 
 //make securty room of us it amiddleware
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
 
     const AuthorizationHeader = req.header("Authorization")
-    if(AuthorizationHeader != null)
-    {
+    if (AuthorizationHeader != null) {
         //remove Bearer from token
-        const token = AuthorizationHeader.replace("Bearer ","");
-       
+        const token = AuthorizationHeader.replace("Bearer ", "");
+
         // we start to decrypt the token
-        jwl.verify(token,"secretkey96#2025",
-            (error,content)=>{
-                if(content==null)
-                {
+        jwl.verify(token, "secretkey96#2025",
+            (error, content) => {
+                if (content == null) {
 
                     res.status(401).json({
 
-                        message : "invalid token"
-                        
-                        
+                        message: "invalid token"
+
+
                     })
                     // if wrong token we dont run until after that  why use return
-                    
+
                 }
-                else
-                {
-                   
+                else {
+                    console.log("authenticated user", content);
                     req.user = content
-                     next();
+                    next();
                 }
             })
     }
     // if they dont have token  if they go as login
-    else{
+    else {
         next()
     }
-    
+
 
     // next is a funtion id give detils to people who need it,like hand over job
- 
+
 
 }
 )
 
 
-app.use('/api/users',userRouter)
-app.use('/api/products',productRouter);
+app.use('/api/users', userRouter)
+app.use('/api/products', productRouter);
 
 
-app.listen(5000,()=>{
+app.listen(5000, () => {
     console.log("server is running on port 5000")
-  }) ;
+});
 
 
 

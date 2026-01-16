@@ -85,19 +85,21 @@ export function loginUser(req,res){
 }
 
 
+// ✅ CORRECT VERSION
 export function isAdmin(req){
-
-     if(req.user == null){
-        console.log(req.user);
-        return false
+    // If no user, they are NOT admin
+    if(req.user == null){
+        console.log("No user found - not authenticated")
+        return false  // ✅ Return FALSE when user is null
     }
 
+    // If user exists but is not admin
     if(req.user.role != "admin"){
-        console.log(req.user);
+        console.log("User role:", req.user.role)
         return false
     }
+    
+    // User exists and is admin
     return true
-
-
 }
 //add try catch blocks
