@@ -3,7 +3,7 @@ import Order from "../models/order.js";
 import Product from "../models/product.js";
 import { isAdmin } from "./userController.js";
 
-export async function createOrder(req, res) {
+export async function CreateOrder(req, res) {
     if (req.user == null) {
         res.status(401).json({ message: "Unauthorized" })
         return
@@ -52,7 +52,8 @@ export async function createOrder(req, res) {
             total: totalAmount,
             items: items,
             userID: req.user.userID,
-            phoneNumber: req.body.phoneNumber
+            phoneNumber: req.body.phoneNumber,
+            Notes: req.body.Notes
         });
         { console.log(req.body) }
         await newOrder.save();
@@ -65,7 +66,7 @@ export async function createOrder(req, res) {
     }
 }
 
-export async function getOrders(req, res) {
+export async function GetOrders(req, res) {
 
     if (req.user == null) {
         res.status(401).json({ message: "Unauthorized" })
@@ -82,4 +83,29 @@ export async function getOrders(req, res) {
         const orders = await Order.find({ email: req.user.email }).sort({ date: -1 })
         res.json(orders)
     }
+}
+
+export async function UpdateOrder(req, res) {
+    if (req.user == null || !isAdmin(req)) {
+        res.status(401).json({ message: "Unauthorized" })
+        return
+    }
+    try {
+
+        const orderId = req.params.orderId;
+        const status = req.body.status;
+        const Notes = req.body.Notes;
+        
+
+        await Order.updateOne(
+            { orderId: orderId },
+            {  status: status, Notes: Notes  }
+        );
+        
+        return res.status(200).json({ message: "Order updated successfully" });
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+
 }

@@ -44,7 +44,7 @@ const orderSchema = new mongoose.Schema({
         required: false
     },
 
-    notees: {
+    Notes: {
         type: String,
         required: false
     },

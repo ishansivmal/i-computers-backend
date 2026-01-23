@@ -74,7 +74,7 @@ export function getAllproduct(req, res) {
 
 
 export function deleteProducts(req, res) {
-    console.log(req.user);
+    
 
     if (!isAdmin(req)) {
         res.status(403).json({ message: "Forbidden: Admins only" });
