@@ -103,3 +103,17 @@ export function isAdmin(req){
     return true
 }
 //add try catch blocks
+
+
+
+export  function getUsers(req,res){
+   if(req.user ==null)
+   {
+    res.status(401).json
+    ({message:"Unauthorized"})
+    return
+   }
+
+   res.json(req.user)
+
+}
