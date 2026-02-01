@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema(
         image:{
             type:String,
            
-            default :'/default.png'
+            default :'../../public/default.jpg'
 
         
         
