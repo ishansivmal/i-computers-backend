@@ -3,6 +3,7 @@ import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import axios from "axios";
 
 
 dotenv.config();
@@ -95,7 +96,7 @@ export function isAdmin(req){
 
     // If user exists but is not admin
     if(req.user.role != "admin"){
-        console.log("User role:", req.user.role)
+        
         return false
     }
     
@@ -116,4 +117,13 @@ export  function getUsers(req,res){
 
    res.json(req.user)
 
+}
+
+export async function googlelogin(req, res) {
+    console.log("=== Google Login Request ===");
+    console.log("Full request body:", req.body);
+    console.log("Token received:", req.body.token); // ✅ lowercase 't'
+    
+
+    
 }

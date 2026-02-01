@@ -55,7 +55,7 @@ export async function CreateOrder(req, res) {
             phoneNumber: req.body.phoneNumber,
             Notes: req.body.Notes
         });
-        { console.log(req.body) }
+        
         await newOrder.save();
         return res.status(201).json({
             message: "Order created successfully",
@@ -77,7 +77,7 @@ export async function GetOrders(req, res) {
 
         const orders = await Order.find().sort({ date: -1 })
         res.json(orders)
-        console.log(orders)
+        
     }
     else {
         const orders = await Order.find({ email: req.user.email }).sort({ date: -1 })
