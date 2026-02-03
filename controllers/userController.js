@@ -120,10 +120,78 @@ export  function getUsers(req,res){
 }
 
 export async function googlelogin(req, res) {
-    console.log("=== Google Login Request ===");
-    console.log("Full request body:", req.body);
-    console.log("Token received:", req.body.token); // ✅ lowercase 't'
     
+    console.log("Token received:", req.body.token);
+   
+    try
+        {
+
+            const response = await axios.get(
+                "https://oauth2.googleapis.com/tokeninfo",
+            {
+                headers: {
+                    Authorization: `Bearer ${req.body.token}`,
+                }
+            }
+            );
+
+            console.log("Google token verification response:", response.data);
+
+            const user = await User.findOne({ email: response.data.email });
+
+            if(user==null)
+            {
+                const newUser = new User({
+                    email : response.data.email,
+                    lastName : response.data.family_name,
+                    firstName : response.data.given_name,
+                    password : "123",
+                    image : response.data.picture   
+                    
+                })
+                await newUser.save();
+
+                const payload = {
+                    email: newUser.email,
+                    lastName: newUser.lastName,
+                    firstName: newUser.firstName,
+                    role: newUser.role,
+                    isEmailVerified:true,
+                    image: newUser.image
+
+                }
+                const token = jwt.sign(payload, process.env.jwtSecret, { expiresIn: '150h' })
+                res.json({
+                    message: "login successful",
+                    token: token,
+                    role: newUser.role
+                });
+
+            }
+            else
+            {
+                const payload = {
+                    email: user.email,
+                    lastName: user.lastName,
+                    firstName: user.firstName,
+                    role: user.role,
+                    isEmailVerified: user.isEmailVerified,
+                    image: user.image
+                }
+                const token = jwt.sign(payload, process.env.jwtSecret, { expiresIn: '150h' })
+                res.json({
+                    message: "login successful",
+                    token: token,
+                    role: user.role
+                });
+
+            }
+            
+
+
+        } catch (error) {
+            console.error("Error verifying Google token:", error);
+        }   
 
     
 }
