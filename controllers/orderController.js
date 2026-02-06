@@ -109,3 +109,10 @@ export async function UpdateOrder(req, res) {
     }
 
 }
+
+export async function ProductSearch(req, res) {
+
+    const quary = req.params.quary;
+
+
+}
