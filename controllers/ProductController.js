@@ -167,3 +167,30 @@ export function getProductById(req, res) {
 //hello
 //add try catch blocks
 
+
+
+export async function serachProducts(req, res) {
+
+    const query = req.query.params
+
+    try{
+
+
+        const products = await product.find(
+            {
+
+                name : { $regex: query, $options: "i" },
+                isAvailable: true
+            })
+        res.json(products)
+
+    }catch(err) {
+        res.status(500).json({
+            message: "Error searching products",
+            error: err.message
+        })
+    }
+    
+
+    
+}
