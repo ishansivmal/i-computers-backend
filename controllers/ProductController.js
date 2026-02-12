@@ -172,7 +172,6 @@ export function getProductById(req, res) {
 export async function serachProducts(req, res) {
 
     const query = req.query.params
-
     try{
 
 

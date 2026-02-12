@@ -8,7 +8,7 @@ productRouter.get("/",getAllproduct);
 
 
 productRouter.post("/",createProduct);
-productRouter.get("/search:query", serachProducts);
+productRouter.get("/search/:query", serachProducts);
 productRouter.delete("/:productID",deleteProducts);
 productRouter.put("/:productID",updateProduct);
 productRouter.get("/:productID",getProductById);
