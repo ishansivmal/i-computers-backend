@@ -58,7 +58,15 @@ export function loginUser(req,res){
                 })
             }
             else{
+                
                 const user = users[0];
+                if(user.isBloked)
+                {
+                    res.status(403).json({
+                        message : "Your account is blocked. Please contact support."
+                    })
+                    return;
+                }
                 const isPasswordValid = bcrypt.compareSync(password,user.password);
                 if(isPasswordValid){
 
@@ -182,6 +190,13 @@ export async function googlelogin(req, res) {
             }
             else
             {
+                 if(user.isBloked)
+                {
+                    res.status(403).json({
+                        message : "Your account is blocked. Please contact support."
+                    })
+                    return;
+                }
                 const payload = {
                     email: user.email,
                     lastName: user.lastName,
@@ -298,3 +313,56 @@ export async function validateOTP_and_updatePassword(req,res)
         res.status(500).json({message:error.message});
     }
 }
+
+
+export async function getAllusers(req,res)
+{
+    if(!isAdmin(req))
+    { res.status(401).json({message:"Unauthorized"})
+    return
+
+    }
+
+    try{
+        const users = await User.find();
+        res.json(users);
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message});
+    }} 
+
+
+    export  async function UpdateUserStatus(req,res){
+        if(!isAdmin(req))
+        {
+            res.status(401).json({message:"Unauthorized"});
+            return;
+        }
+
+        const email = req.params.email;
+
+        if(req.user.email === email)
+        {
+            res.status(400).json({message:"You cannot update your own status"});
+            return;
+        }
+
+
+        const  isBloked = req.body.isBloked;
+        try
+        {
+                await User.updateOne({ email:email},{$set:{isBloked:isBloked}});
+
+                res.json({message:"User status updated successfully"});
+
+
+        }catch(error){
+            console.log(error);
+            res.status(500).json({message:"Failed to update user status"});
+        }   
+        
+
+       
+
+    }

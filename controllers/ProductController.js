@@ -178,8 +178,10 @@ export async function serachProducts(req, res) {
 
         const products = await product.find(
             {
-
-                pName: { $regex: query, $options: "i" },
+                $or: [
+                    { pName: { $regex: query, $options: "i" } },
+                    { pAltname: { $regex: query, $options: "i" } }
+                ],
                 isAvailable: true
                 
             })
