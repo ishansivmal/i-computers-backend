@@ -171,15 +171,17 @@ export function getProductById(req, res) {
 
 export async function serachProducts(req, res) {
 
-    const query = req.query.params
+    const query = req.params.query
+    console.log("Search query:", query);
     try{
 
 
         const products = await product.find(
             {
 
-                name : { $regex: query, $options: "i" },
+                pName: { $regex: query, $options: "i" },
                 isAvailable: true
+                
             })
         res.json(products)
 
