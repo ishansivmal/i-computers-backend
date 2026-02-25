@@ -48,6 +48,13 @@ app.use((req, res, next) => {
     }
 });
 
+app.get('/', (req, res) => {
+    res.json({
+        message: "i-computers backend is running",
+        status: "OK"
+    });
+});
+
 app.use('/api/users', userRouter);
 app.use('/api/products', productRouter);
 app.use('/api/orders', orderRouter);
