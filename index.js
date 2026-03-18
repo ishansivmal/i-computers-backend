@@ -10,7 +10,7 @@ import orderRouter from './routers/orderRouter.js';
 import chartbotRouter from './routers/chartbotRouter.js';
 dotenv.config();
 
-const mongoURL = process.env.mongoURL
+ mongoURL = process.env.mongoURL
 mongoose.connect(mongoURL).then(() => {
     console.log("connected to mongoDB");
 })
