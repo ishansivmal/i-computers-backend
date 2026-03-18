@@ -1,7 +1,16 @@
 import Groq from "groq-sdk";
 import Product from "../models/product.js";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+let groq;  // ✅ Declare globally, initialize later
+
+// ✅ Initialize Groq after dotenv loads
+export const initGroq = () => {
+    if (!process.env.GROQ_API_KEY) {
+        throw new Error("GROQ_API_KEY is not set in environment variables");
+    }
+    groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    console.log("✅ Groq initialized successfully");
+};
 
 async function query_database(filter) {
   try {
@@ -44,6 +53,11 @@ async function query_database(filter) {
 
 export const handleChat = async (req, res) => {
   try {
+    // ✅ Check if Groq is initialized
+    if (!groq) {
+      return res.status(500).json({ error: "Chat service not initialized. Please try again later." });
+    }
+
     const { message } = req.body;
 
     if (!message) {

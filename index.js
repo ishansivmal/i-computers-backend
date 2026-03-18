@@ -10,7 +10,7 @@ import userRouter from './routers/userRouter.js';
 import productRouter from './routers/productRouter.js';
 import orderRouter from './routers/orderRouter.js';
 import chartbotRouter from './routers/chartbotRouter.js';
-
+import { initGroq  } from './controllers/chartbotController.js';
 // ✅ Get environment variables
 const mongoURL = process.env.mongoURL;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -24,6 +24,14 @@ if (!mongoURL) {
 
 if (!JWT_SECRET) {
     console.error("❌ ERROR: JWT_SECRET not found in .env file");
+    process.exit(1);
+}
+
+// ✅ Initialize Groq after dotenv loads
+try {
+    initGroq();
+} catch (error) {
+    console.error("❌ ERROR: Could not initialize Groq:", error.message);
     process.exit(1);
 }
 
