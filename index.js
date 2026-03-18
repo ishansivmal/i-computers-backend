@@ -1,50 +1,73 @@
+import dotenv from 'dotenv';
+dotenv.config();  // ✅ MUST BE FIRST!
+
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 
 import userRouter from './routers/userRouter.js';
 import productRouter from './routers/productRouter.js';
-import jwt from 'jsonwebtoken';  // Fixed: was 'jwl', should be 'jwt'
-import dotenv from 'dotenv';
 import orderRouter from './routers/orderRouter.js';
 import chartbotRouter from './routers/chartbotRouter.js';
-dotenv.config();
 
- mongoURL = process.env.mongoURL
-mongoose.connect(mongoURL).then(() => {
-    console.log("connected to mongoDB");
-})
+// ✅ Get environment variables
+const mongoURL = process.env.mongoURL;
+const JWT_SECRET = process.env.JWT_SECRET;
+const PORT = process.env.PORT || 5000;
+
+// Validate required variables
+if (!mongoURL) {
+    console.error("❌ ERROR: mongoURL not found in .env file");
+    process.exit(1);
+}
+
+if (!JWT_SECRET) {
+    console.error("❌ ERROR: JWT_SECRET not found in .env file");
+    process.exit(1);
+}
+
+// ✅ MongoDB connection with error handling
+mongoose.connect(mongoURL)
+    .then(() => {
+        console.log("✅ Connected to MongoDB");
+    })
+    .catch((error) => {
+        console.error("❌ MongoDB connection failed:", error.message);
+        process.exit(1);
+    });
 
 const app = express();
-//available frontend req come to back end using cors
-app.use(cors());
+
+// ✅ CORS configuration
+app.use(cors({
+    origin: 'https://i-computers-frontend-eta.vercel.app',
+    credentials: true
+}));
+
 app.use(express.json());
 
-//make security room of us it a middleware
+// ✅ Authentication middleware with JWT_SECRET from .env
 app.use((req, res, next) => {
-    const AuthorizationHeader = req.header("Authorization");
+    const authHeader = req.header("Authorization");
     
-    if (AuthorizationHeader != null) {
-        //remove Bearer from token
-        const token = AuthorizationHeader.replace("Bearer ", "");
+    if (authHeader) {
+        const token = authHeader.replace("Bearer ", "");
 
-        // we start to decrypt the token
-        jwt.verify(token, "secretkey96#2025", (error, content) => {
+        jwt.verify(token, JWT_SECRET, (error, content) => {
             if (error || content == null) {
-                console.log("No user found - not authenticated");
-                // CRITICAL FIX: Added return here
+                console.log("❌ Invalid token");
                 return res.status(401).json({
                     message: "Invalid token"
                 });
             } else {
-                console.log("authenticated user", content);
+                console.log("✅ Authenticated user:", content);
                 req.user = content;
                 next();
             }
         });
     } else {
-        // If no token, continue without authentication
-        console.log("No user found - not authenticated");
+        console.log("ℹ️ No token - unauthenticated user");
         next();
     }
 });
@@ -59,9 +82,16 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRouter);
 app.use('/api/products', productRouter);
 app.use('/api/orders', orderRouter);
-app.use('/api/chat',chartbotRouter);
+app.use('/api/chat', chartbotRouter);
 
+// ✅ 404 error handler
+app.use((req, res) => {
+    res.status(404).json({
+        message: "Route not found"
+    });
+});
 
-app.listen(5000, () => {
-    console.log("server is running on port 5000");
+// ✅ Start server with correct port
+app.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
 });
