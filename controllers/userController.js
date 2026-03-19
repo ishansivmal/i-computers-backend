@@ -79,7 +79,7 @@ export function loginUser(req,res){
                         isEmailVerified : user.isEmailVerified,
                         image : user.image
                     };
-                    const token = jwt.sign(payload,process.env.jwtSecret,{expiresIn :'150h'})
+                    const token = jwt.sign(payload,process.env.JWT_SECRET ,{expiresIn :'150h'})
 
                     res.json({
                         message : "login successful",
@@ -180,7 +180,7 @@ export async function googlelogin(req, res) {
                     image: newUser.image
 
                 }
-                const token = jwt.sign(payload, process.env.jwtSecret, { expiresIn: '150h' })
+                const token = jwt.sign(payload, process.env.JWT_SECRET , { expiresIn: '150h' })
                 res.json({
                     message: "login successful",
                     token: token,
@@ -205,7 +205,7 @@ export async function googlelogin(req, res) {
                     isEmailVerified: user.isEmailVerified,
                     image: user.image
                 }
-                const token = jwt.sign(payload, process.env.jwtSecret, { expiresIn: '150h' })
+                const token = jwt.sign(payload, process.env.JWT_SECRET , { expiresIn: '150h' })
                 res.json({
                     message: "login successful",
                     token: token,
