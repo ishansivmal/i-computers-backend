@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config();  // ✅ MUST BE FIRST!
+dotenv.config();  // ✅ For local development
 
 import express from 'express';
 import cors from 'cors';
@@ -10,26 +10,28 @@ import userRouter from './routers/userRouter.js';
 import productRouter from './routers/productRouter.js';
 import orderRouter from './routers/orderRouter.js';
 import chartbotRouter from './routers/chartbotRouter.js';
-import { initGroq  } from './controllers/chartbotController.js';
-// ✅ Get environment variables
+import { initGroq } from './controllers/chartbotController.js';
+
+// ✅ Get environment variables (works both locally and on Railway)
 const mongoURL = process.env.mongoURL;
 const JWT_SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT || 5000;
 
 // Validate required variables
 if (!mongoURL) {
-    console.error("❌ ERROR: mongoURL not found in .env file");
+    console.error("❌ ERROR: mongoURL not found");
     process.exit(1);
 }
 
 if (!JWT_SECRET) {
-    console.error("❌ ERROR: JWT_SECRET not found in .env file");
+    console.error("❌ ERROR: JWT_SECRET not found");
     process.exit(1);
 }
 
 // ✅ Initialize Groq after dotenv loads
 try {
     initGroq();
+    console.log("✅ Groq initialized successfully");
 } catch (error) {
     console.error("❌ ERROR: Could not initialize Groq:", error.message);
     process.exit(1);
@@ -47,15 +49,35 @@ mongoose.connect(mongoURL)
 
 const app = express();
 
-// ✅ CORS configuration
+// ✅ CORS configuration - Works for BOTH local and production
 app.use(cors({
-    origin: 'https://i-computers-frontend-eta.vercel.app',
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            // Production URLs
+            'https://i-computers-frontend-eta.vercel.app',
+            
+            // Local development URLs
+            'http://localhost:3000',
+            'http://localhost:5173',
+            'http://localhost:5000',
+            'http://127.0.0.1:3000',
+            'http://127.0.0.1:5173',
+            'http://127.0.0.1:5000'
+        ];
+        
+        // Allow requests with no origin (mobile apps, curl, Postman, etc.)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 
 app.use(express.json());
 
-// ✅ Authentication middleware with JWT_SECRET from .env
+// ✅ Authentication middleware with JWT_SECRET from environment
 app.use((req, res, next) => {
     const authHeader = req.header("Authorization");
     
