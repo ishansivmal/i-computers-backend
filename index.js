@@ -58,31 +58,21 @@ mongoose.connect(mongoURL)
 const app = express();
 
 // ✅ CORS configuration - Works for BOTH local and production
+// ✅ Safer, simplified CORS configuration
 app.use(cors({
-    origin: function (origin, callback) {
-        const allowedOrigins = [
-            // Production URLs
-            'https://i-computers-frontend-eta.vercel.app',
-            
-            // Local development URLs
-            'http://localhost:3000',
-            'http://localhost:5173',
-            'http://localhost:5000',
-            'http://127.0.0.1:3000',
-            'http://127.0.0.1:5173',
-            'http://127.0.0.1:5000'
-        ];
-        
-        // Allow requests with no origin (mobile apps, curl, Postman, etc.)
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true
+    origin: [
+        'https://i-computers-frontend-eta.vercel.app', // Production frontend
+        'http://localhost:3000',                       // Local frontends
+        'http://localhost:5173',
+        'http://localhost:5000',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:5000'
+    ],
+    credentials: true, // Required if you are sending cookies or Authorization headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow these methods
+    allowedHeaders: ['Content-Type', 'Authorization'] // Explicitly allow these headers
 }));
-
 app.use(express.json());
 
 // ✅ Authentication middleware with JWT_SECRET from environment
