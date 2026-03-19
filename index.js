@@ -12,7 +12,13 @@ import orderRouter from './routers/orderRouter.js';
 import chartbotRouter from './routers/chartbotRouter.js';
 import { initGroq } from './controllers/chartbotController.js';
 
-// ✅ Get environment variables (works both locally and on Railway)
+// ✅ Get environment variables with detailed logging
+console.log("📋 Available environment variables:");
+console.log("  mongoURL:", process.env.mongoURL ? "✅ SET" : "❌ NOT SET");
+console.log("  JWT_SECRET:", process.env.JWT_SECRET ? "✅ SET" : "❌ NOT SET");
+console.log("  PORT:", process.env.PORT || "5000 (default)");
+console.log("  NODE_ENV:", process.env.NODE_ENV || "development");
+
 const mongoURL = process.env.mongoURL;
 const JWT_SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT || 5000;
@@ -20,11 +26,13 @@ const PORT = process.env.PORT || 5000;
 // Validate required variables
 if (!mongoURL) {
     console.error("❌ ERROR: mongoURL not found");
+    console.error("   Make sure 'mongoURL' is set in Railway Variables");
     process.exit(1);
 }
 
 if (!JWT_SECRET) {
     console.error("❌ ERROR: JWT_SECRET not found");
+    console.error("   Make sure 'JWT_SECRET' is set in Railway Variables");
     process.exit(1);
 }
 
